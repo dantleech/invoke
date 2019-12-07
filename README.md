@@ -18,6 +18,15 @@ Require with composer:
 $ composer require dantleech/invoke
 ```
 
+Why
+---
+
+Sometimes arguments may be sourced from arrays (e.g. user or developer configuration), having
+named parameters in this case can make things simpler and save time.
+
+I probably **wouldn't** use this as an alternative way to create a new class when there is no reason
+not to use its existing construction methods.
+
 Usage
 -----
 
