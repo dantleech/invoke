@@ -14,6 +14,11 @@ class Invoke
     public const MODE_TYPE = 1;
     public const MODE_NAME = 2;
 
+    /**
+     * @var int
+     */
+    private $mode;
+
     private const METHOD_CONSTRUCT = '__construct';
 
     public function __construct(int $mode)
@@ -21,12 +26,7 @@ class Invoke
         $this->mode = $mode;
     }
 
-    /**
-     * @var int
-     */
-    private $mode;
-
-    public static function newClass(string $className, array $data = [], $mode = self::MODE_NAME)
+    public static function new(string $className, array $data = [], $mode = self::MODE_NAME)
     {
         return (new self($mode))->doInstantiate($className, $data);
     }

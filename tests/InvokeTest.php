@@ -12,14 +12,14 @@ class InvokeTest extends TestCase
 {
     public function testWithNoConstructor()
     {
-        $this->assertEquals(new TestClass1(), Invoke::newClass(TestClass1::class, []));
+        $this->assertEquals(new TestClass1(), Invoke::new(TestClass1::class, []));
     }
 
     public function testWithConstructorWithArgument()
     {
         $this->assertEquals(
             new TestClass2('foobar'),
-            Invoke::newClass(TestClass2::class, [
+            Invoke::new(TestClass2::class, [
                 'one' => 'foobar'
             ])
         );
@@ -30,7 +30,7 @@ class InvokeTest extends TestCase
         $this->expectException(UnknownKeys::class);
         $this->assertEquals(
             new TestClass2('foobar'),
-            Invoke::newClass(TestClass2::class, [
+            Invoke::new(TestClass2::class, [
                 'two' => 'foobar'
             ])
         );
@@ -41,7 +41,7 @@ class InvokeTest extends TestCase
         $this->expectException(RequiredKeysMissing::class);
         $this->assertEquals(
             new TestClass2('foobar'),
-            Invoke::newClass(TestClass2::class, [])
+            Invoke::new(TestClass2::class, [])
         );
     }
 
@@ -49,7 +49,7 @@ class InvokeTest extends TestCase
     {
         $this->assertEquals(
             new TestClass3('foobar', 'barfoo'),
-            Invoke::newClass(TestClass3::class, [
+            Invoke::new(TestClass3::class, [
                 'one' => 'foobar',
             ])
         );
@@ -65,7 +65,7 @@ class InvokeTest extends TestCase
             $this->expectExceptionMessageRegExp('/' . $expectedExceptionMessage . '/');
         }
 
-        $object = Invoke::newClass(TestClass4::class, $params);
+        $object = Invoke::new(TestClass4::class, $params);
         $this->assertInstanceOf(TestClass4::class, $object);
     }
 
