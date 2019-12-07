@@ -154,7 +154,7 @@ class Invoke
             if (!$reflectionType->isBuiltin()) {
                 $reflectionClass = new ReflectionClass($typeName);
 
-                if ($typeName === $reflectionType->__toString() || $reflectionClass->isSubclassOf($reflectionType->__toString())) {
+                if ($typeName === $reflectionType->getName() || $reflectionClass->isSubclassOf($reflectionType->getName())) {
                     continue;
                 }
             }
@@ -231,7 +231,7 @@ class Invoke
                 }
 
                 if (gettype($givenArg) === 'object') {
-                    if (is_a($givenArg, $type->__toString())) {
+                    if (is_a($givenArg, $type->getName())) {
                         $resolved[$parameter->getName()] = $givenArg;
                     }
                 }
