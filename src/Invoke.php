@@ -11,28 +11,29 @@ use ReflectionParameter;
 
 class Invoke
 {
+    public const MODE_TYPE = 1;
     public const MODE_NAME = 2;
 
     private const METHOD_CONSTRUCT = '__construct';
+
+    public function __construct(int $mode)
+    {
+        $this->mode = $mode;
+    }
 
     /**
      * @var int
      */
     private $mode;
 
-    public static function instantiate(string $className, array $data = [], $mode = self::MODE_NAME)
+    public static function newClass(string $className, array $data = [], $mode = self::MODE_NAME)
     {
         return (new self($mode))->doInstantiate($className, $data);
     }
 
-    public static function call(object $object, string $methodName, array $args, int $mode = self::MODE_NAME)
+    public static function method(object $object, string $methodName, array $args, int $mode = self::MODE_NAME)
     {
         return (new self($mode))->doCall($object, $methodName, $args);
-    }
-
-    public function __construct(int $mode)
-    {
-        $this->mode = $mode;
     }
 
     private function doCall(object $object, string $methodName, array $args)
