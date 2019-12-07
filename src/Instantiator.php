@@ -1,11 +1,11 @@
 <?php
 
-namespace DTL\NamedParameters;
+namespace DTL\Invoke;
 
-use DTL\NamedParameters\Exception\ClassHasNoConstructor;
-use DTL\NamedParameters\Exception\InvalidParameterType;
-use DTL\NamedParameters\Exception\RequiredKeysMissing;
-use DTL\NamedParameters\Exception\UnknownKeys;
+use DTL\Invoke\Exception\ClassHasNoConstructor;
+use DTL\Invoke\Exception\InvalidParameterType;
+use DTL\Invoke\Exception\RequiredKeysMissing;
+use DTL\Invoke\Exception\UnknownKeys;
 use ReflectionClass;
 use ReflectionParameter;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace DTL\NamedParameters\Exception;
+namespace DTL\Invoke\Exception;
 
 use RuntimeException;
 

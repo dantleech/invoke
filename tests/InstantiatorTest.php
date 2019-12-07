@@ -2,10 +2,10 @@
 
 namespace Maestro\Tests;
 
-use DTL\NamedParameters\Instantiator;
-use DTL\NamedParameters\Exception\InvalidParameterType;
-use DTL\NamedParameters\Exception\RequiredKeysMissing;
-use DTL\NamedParameters\Exception\UnknownKeys;
+use DTL\Invoke\Instantiator;
+use DTL\Invoke\Exception\InvalidParameterType;
+use DTL\Invoke\Exception\RequiredKeysMissing;
+use DTL\Invoke\Exception\UnknownKeys;
 use PHPUnit\Framework\TestCase;
 
 class InstantiatorTest extends TestCase
