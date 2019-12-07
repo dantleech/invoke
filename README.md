@@ -1,6 +1,8 @@
 Invoke
 ======
 
+[![Build Status](https://travis-ci.org/dantleech/invoke.svg?branch=master)](https://travis-ci.org/dantleech/invoke)
+
 Utility class to create new classes or invoke methods using named arguments.
 
 PHP does not currently support [named
