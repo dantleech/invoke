@@ -1,6 +1,6 @@
 <?php
 
-namespace DTL\Tests;
+namespace DTL\Invoke\Tests;
 
 use DTL\Invoke\Invoke;
 use DTL\Invoke\Exception\InvalidParameterType;
