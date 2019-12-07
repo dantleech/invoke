@@ -225,7 +225,7 @@ class Invoke
                 if (
                     gettype($givenArg) !== 'object' &&
                     $type->isBuiltin() &&
-                    (string)$parameter->getType() === $this->resolveInternalTypeName($givenArg)
+                    $type->getName() === $this->resolveInternalTypeName($givenArg)
                 ) {
                     $resolved[$parameter->getName()] = $givenArg;
                 }
