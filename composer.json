@@ -35,7 +35,7 @@
       "@phpstan",
       "@phpunit"
     ],
-    "phpstan": "./vendor/bin/phpstan analyse --level=7 --ansi src",
+    "phpstan": "./vendor/bin/phpstan analyse --ansi --level=7",
     "php-cs-fixer": "./vendor/bin/php-cs-fixer fix --ansi --dry-run",
     "phpunit": "./vendor/bin/phpunit --colors=always"
   }
