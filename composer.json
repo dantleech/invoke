@@ -1,0 +1,54 @@
+{
+  "name": "dantleech/maestro",
+  "description": "co-ordinate and manage micro packages",
+  "license": "mit",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "authors": [
+    {
+      "name": "daniel leech",
+      "email": "daniel@dantleech.com"
+    }
+  ],
+
+  "require": {
+    "php": "^7.2"
+  },
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^2.13",
+    "phpunit/phpunit": "^8.0",
+    "phpstan/phpstan": "^0.11.4"
+  },
+  "autoload": {
+    "psr-4": {
+      "DTL\\NamedParameters\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Maestro\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "phpactor.extension_class": "phpactor\\extension\\maestro\\maestroextension",
+    "branch-alias": {
+      "dev-master": "0.1.x-dev"
+    }
+  },
+  "bin": ["bin/maestro"],
+  "scripts": {
+    "integrate": [
+      "@php-cs-fixer",
+      "@phpstan",
+      "@deptrac",
+      "@phpunit",
+      "@examples"
+    ],
+    "deptrac": "./vendor/bin/deptrac",
+    "phpstan": "./vendor/bin/phpstan analyse --level=7 --ansi src",
+    "php-cs-fixer": "./vendor/bin/php-cs-fixer fix --ansi --dry-run",
+    "phpunit": "./vendor/bin/phpunit --colors=always",
+    "examples": "./bin/test_examples",
+    "docs": "make -C./doc html"
+  }
+}

@@ -1,11 +1,11 @@
 <?php
 
-namespace Maestro\Library\Instantiator;
+namespace DTL\NamedParameters;
 
-use Maestro\Library\Instantiator\Exception\ClassHasNoConstructor;
-use Maestro\Library\Instantiator\Exception\InvalidParameterType;
-use Maestro\Library\Instantiator\Exception\RequiredKeysMissing;
-use Maestro\Library\Instantiator\Exception\UnknownKeys;
+use DTL\NamedParameters\Exception\ClassHasNoConstructor;
+use DTL\NamedParameters\Exception\InvalidParameterType;
+use DTL\NamedParameters\Exception\RequiredKeysMissing;
+use DTL\NamedParameters\Exception\UnknownKeys;
 use ReflectionClass;
 use ReflectionParameter;
 

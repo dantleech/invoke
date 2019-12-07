@@ -1,11 +1,11 @@
 <?php
 
-namespace Maestro\Tests\Unit\Library\Instantiator;
+namespace Maestro\Tests;
 
-use Maestro\Library\Instantiator\Instantiator;
-use Maestro\Library\Instantiator\Exception\InvalidParameterType;
-use Maestro\Library\Instantiator\Exception\RequiredKeysMissing;
-use Maestro\Library\Instantiator\Exception\UnknownKeys;
+use DTL\NamedParameters\Instantiator;
+use DTL\NamedParameters\Exception\InvalidParameterType;
+use DTL\NamedParameters\Exception\RequiredKeysMissing;
+use DTL\NamedParameters\Exception\UnknownKeys;
 use PHPUnit\Framework\TestCase;
 
 class InstantiatorTest extends TestCase

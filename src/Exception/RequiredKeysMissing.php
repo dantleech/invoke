@@ -1,6 +1,6 @@
 <?php
 
-namespace Maestro\Library\Instantiator\Exception;
+namespace DTL\NamedParameters\Exception;
 
 use RuntimeException;
 
