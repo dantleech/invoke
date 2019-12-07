@@ -9,9 +9,8 @@ use DTL\Invoke\Exception\UnknownKeys;
 use ReflectionClass;
 use ReflectionParameter;
 
-class Instantiator
+class Invoke
 {
-    public const MODE_TYPE = 1;
     public const MODE_NAME = 2;
 
     private const METHOD_CONSTRUCT = '__construct';

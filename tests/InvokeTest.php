@@ -1,25 +1,25 @@
 <?php
 
-namespace Maestro\Tests;
+namespace DTL\Tests;
 
-use DTL\Invoke\Instantiator;
+use DTL\Invoke\Invoke;
 use DTL\Invoke\Exception\InvalidParameterType;
 use DTL\Invoke\Exception\RequiredKeysMissing;
 use DTL\Invoke\Exception\UnknownKeys;
 use PHPUnit\Framework\TestCase;
 
-class InstantiatorTest extends TestCase
+class InvokeTest extends TestCase
 {
     public function testWithNoConstructor()
     {
-        $this->assertEquals(new TestClass1(), Instantiator::instantiate(TestClass1::class, []));
+        $this->assertEquals(new TestClass1(), Invoke::instantiate(TestClass1::class, []));
     }
 
     public function testWithConstructorWithArgument()
     {
         $this->assertEquals(
             new TestClass2('foobar'),
-            Instantiator::instantiate(TestClass2::class, [
+            Invoke::instantiate(TestClass2::class, [
                 'one' => 'foobar'
             ])
         );
@@ -30,7 +30,7 @@ class InstantiatorTest extends TestCase
         $this->expectException(UnknownKeys::class);
         $this->assertEquals(
             new TestClass2('foobar'),
-            Instantiator::instantiate(TestClass2::class, [
+            Invoke::instantiate(TestClass2::class, [
                 'two' => 'foobar'
             ])
         );
@@ -41,7 +41,7 @@ class InstantiatorTest extends TestCase
         $this->expectException(RequiredKeysMissing::class);
         $this->assertEquals(
             new TestClass2('foobar'),
-            Instantiator::instantiate(TestClass2::class, [])
+            Invoke::instantiate(TestClass2::class, [])
         );
     }
 
@@ -49,7 +49,7 @@ class InstantiatorTest extends TestCase
     {
         $this->assertEquals(
             new TestClass3('foobar', 'barfoo'),
-            Instantiator::instantiate(TestClass3::class, [
+            Invoke::instantiate(TestClass3::class, [
                 'one' => 'foobar',
             ])
         );
@@ -65,7 +65,7 @@ class InstantiatorTest extends TestCase
             $this->expectExceptionMessageRegExp('/' . $expectedExceptionMessage . '/');
         }
 
-        $object = Instantiator::instantiate(TestClass4::class, $params);
+        $object = Invoke::instantiate(TestClass4::class, $params);
         $this->assertInstanceOf(TestClass4::class, $object);
     }
 
@@ -99,7 +99,7 @@ class InstantiatorTest extends TestCase
     public function testInvokeWithNamedParameters()
     {
         $subject = new TestClass5();
-        Instantiator::call($subject, 'callMe', [
+        Invoke::call($subject, 'callMe', [
             'string' => 'hello',
         ]);
         $this->assertEquals('hello', $subject->string);
@@ -108,13 +108,13 @@ class InstantiatorTest extends TestCase
     public function testInvokeInvokeWithTypesOnly()
     {
         $subject = new TestClass6();
-        Instantiator::call($subject, 'callMe', [
+        Invoke::call($subject, 'callMe', [
             true,
             'hello',
             ['goodbye'],
             12,
             new TestClass1(),
-        ], Instantiator::MODE_TYPE);
+        ], Invoke::MODE_TYPE);
 
         $this->assertEquals(true, $subject->bool);
         $this->assertEquals('hello', $subject->string);
@@ -127,9 +127,9 @@ class InstantiatorTest extends TestCase
     {
         $this->expectException(RequiredKeysMissing::class);
         $subject = new TestClass6();
-        Instantiator::call($subject, 'callMe', [
+        Invoke::call($subject, 'callMe', [
             'hello',
-        ], Instantiator::MODE_TYPE);
+        ], Invoke::MODE_TYPE);
 
         $this->assertEquals(true, $subject->bool);
     }
