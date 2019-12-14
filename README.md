@@ -74,6 +74,12 @@ $bar= Invoke::method($foo, 'one', [
 ]);
 ```
 
+Alternatives
+------------
+
+[nikolaposa/cascader](https://github.com/nikolaposa/cascader)
+Utility for creating objects in PHP from constructor parameters definitions.
+
 Contributing
 ------------
 
