@@ -133,6 +133,16 @@ class InvokeTest extends TestCase
 
         $this->assertEquals(true, $subject->bool);
     }
+
+    public function testParameterExceptionWhenArrayPassedToObject()
+    {
+        $this->expectException(InvalidParameterType::class);
+        Invoke::new(ClassConstructor::class, [
+            'class1' => [],
+        ]);
+
+        $this->assertEquals(true, $subject->bool);
+    }
 }
 
 class TestClass1
@@ -249,4 +259,11 @@ class TestClass6
 
 class SubClassOfTestClass1 extends TestClass1
 {
+}
+
+class ClassConstructor
+{
+    public function __construct(TestClass1 $class1)
+    {
+    }
 }

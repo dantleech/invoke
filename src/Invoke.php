@@ -151,7 +151,7 @@ class Invoke
                 continue;
             }
 
-            if (!$reflectionType->isBuiltin()) {
+            if ($typeName !== 'array' && !$reflectionType->isBuiltin()) {
                 $reflectionClass = new ReflectionClass($typeName);
 
                 if ($typeName === $reflectionType->getName() || $reflectionClass->isSubclassOf($reflectionType->getName())) {
