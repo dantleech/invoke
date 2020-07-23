@@ -62,7 +62,7 @@ class InvokeTest extends TestCase
     {
         if ($expectedExceptionMessage) {
             $this->expectException(InvalidParameterType::class);
-            $this->expectExceptionMessageRegExp('/' . $expectedExceptionMessage . '/');
+            $this->expectExceptionMessage($expectedExceptionMessage);
         }
 
         $object = Invoke::new(TestClass4::class, $params);
@@ -92,6 +92,12 @@ class InvokeTest extends TestCase
         yield 'declared class' => [
             [
                 'subclass' => new TestClass1(),
+            ],
+        ];
+
+        yield 'object type' => [
+            [
+                'object' => new TestClass1(),
             ],
         ];
     }
@@ -199,7 +205,7 @@ class TestClass4
      */
     private $bool;
 
-    public function __construct(string $string = '', array $array = [], int $int = 1, bool $bool = false, TestClass1 $subclass = null)
+    public function __construct(string $string = '', array $array = [], int $int = 1, bool $bool = false, TestClass1 $subclass = null, object $object = null)
     {
         $this->string = $string;
         $this->array = $array;

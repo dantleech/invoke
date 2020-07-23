@@ -151,6 +151,10 @@ class Invoke
                 continue;
             }
 
+            if ($reflectionType->getName() === 'object' && is_object($value)) {
+                continue;
+            }
+
             if ($typeName !== 'array' && !$reflectionType->isBuiltin()) {
                 $reflectionClass = new ReflectionClass($typeName);
 
