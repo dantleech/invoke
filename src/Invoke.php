@@ -87,16 +87,20 @@ class Invoke
 
     private function resolveArguments(ReflectionClass $class, string $methodName, array $arguments): array
     {
-        $method = $class->getMethod($methodName);
-        $parameters = Parameters::fromRefelctionFunctionAbstract($method);
+        try {
+            $method = $class->getMethod($methodName);
+        } catch (ReflectionException $error) {
+            throw new ReflectionError($error->getMessage(), 0, $error);
+        }
 
-        $resolved  =$this->resolver->resolve($parameters, $arguments);
+        $parameters = Parameters::fromRefelctionFunctionAbstract($method);
+        $resolved = $this->resolver->resolve($parameters, $arguments);
+
+        $this->assertNoUnknownKeys($resolved, $parameters);
+        $this->assertRequiredKeys($resolved, $parameters);
+        $this->assertTypes($resolved, $parameters);
 
         $arguments = $this->mergeDefaults($parameters, $resolved->resolved());
-
-        $this->assertNoExtraKeys($resolved, $parameters, $method);
-        $this->assertRequiredKeys($resolved, $parameters, $method);
-        $this->assertTypes($resolved, $parameters, $method);
 
         return array_values($arguments);
     }
@@ -106,14 +110,14 @@ class Invoke
         return array_merge($parameters->defaults()->toArray(), $givenArgs);
     }
 
-    private function assertNoExtraKeys(ResolvedArguments $resolved, Parameters $parameters): void
+    private function assertNoUnknownKeys(ResolvedArguments $resolved, Parameters $parameters): void
     {
         if (!$resolved->unresolved()) {
             return;
         }
 
         throw new UnknownKeys(sprintf(
-            'Unknown keys "%s" for "%s", known keys: "%s"',
+            'Extra keys "%s" for "%s", known keys: "%s"',
             implode('", "', array_keys($resolved->unresolved())),
             $parameters->describeOwner(),
             implode('", "', $parameters->keys())

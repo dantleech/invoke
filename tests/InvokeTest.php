@@ -2,17 +2,19 @@
 
 namespace DTL\Invoke\Tests;
 
+use Closure;
 use DTL\Invoke\Exception\ClassHasNoConstructor;
 use DTL\Invoke\Exception\ReflectionError;
 use DTL\Invoke\Invoke;
 use DTL\Invoke\Exception\InvalidParameterType;
 use DTL\Invoke\Exception\RequiredKeysMissing;
 use DTL\Invoke\Exception\UnknownKeys;
+use Generator;
 use PHPUnit\Framework\TestCase;
 
 class InvokeTest extends TestCase
 {
-    public function testWithNoConstructor()
+    public function testNewWithNoConstructor()
     {
         $this->assertEquals(new TestClass1(), Invoke::new(TestClass1::class, []));
     }
@@ -29,6 +31,13 @@ class InvokeTest extends TestCase
     {
         $this->expectException(ReflectionError::class);
         Invoke::new('THISISNOTEXISTING');
+    }
+
+    public function testExceptionIfClassDoesntHaveNamedMethod(): void
+    {
+        $this->expectException(ReflectionError::class);
+        $class = new TestClass1();
+        Invoke::method($class, 'THISISNOTEXISTING', []);
     }
 
     public function testInstantiateWithUnorderedArgs(): void
