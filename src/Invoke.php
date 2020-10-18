@@ -2,18 +2,21 @@
 
 namespace DTL\Invoke;
 
-use DTL\Invoke\ArgumentResolver\NamedArgumentResolver;
-use DTL\Invoke\ArgumentResolver\TypedArgumentResolver;
-use DTL\Invoke\Exception\ClassHasNoConstructor;
-use DTL\Invoke\Exception\InvalidParameterType;
-use DTL\Invoke\Exception\ReflectionError;
-use DTL\Invoke\Exception\RequiredKeysMissing;
-use DTL\Invoke\Exception\UnknownKeys;
+use DTL\Invoke\Internal\ArgumentResolver\NamedArgumentResolver;
+use DTL\Invoke\Internal\ArgumentResolver\TypedArgumentResolver;
+use DTL\Invoke\Internal\Exception\ClassHasNoConstructor;
+use DTL\Invoke\Internal\Exception\InvalidParameterType;
+use DTL\Invoke\Internal\Exception\ReflectionError;
+use DTL\Invoke\Internal\Exception\RequiredKeysMissing;
+use DTL\Invoke\Internal\Exception\UnknownKeys;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
 use ReflectionParameter;
+use DTL\Invoke\Internal\ArgumentResolver;
+use DTL\Invoke\Internal\Parameters;
+use DTL\Invoke\Internal\ResolvedArguments;
 
 class Invoke
 {

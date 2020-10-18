@@ -1,6 +1,6 @@
 <?php
 
-namespace DTL\Invoke;
+namespace DTL\Invoke\Internal;
 
 use ReflectionFunctionAbstract;
 

@@ -3,12 +3,12 @@
 namespace DTL\Invoke\Tests;
 
 use Closure;
-use DTL\Invoke\Exception\ClassHasNoConstructor;
-use DTL\Invoke\Exception\ReflectionError;
+use DTL\Invoke\Internal\Exception\ClassHasNoConstructor;
+use DTL\Invoke\Internal\Exception\ReflectionError;
 use DTL\Invoke\Invoke;
-use DTL\Invoke\Exception\InvalidParameterType;
-use DTL\Invoke\Exception\RequiredKeysMissing;
-use DTL\Invoke\Exception\UnknownKeys;
+use DTL\Invoke\Internal\Exception\InvalidParameterType;
+use DTL\Invoke\Internal\Exception\RequiredKeysMissing;
+use DTL\Invoke\Internal\Exception\UnknownKeys;
 use Generator;
 use PHPUnit\Framework\TestCase;
 

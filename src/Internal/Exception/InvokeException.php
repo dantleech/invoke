@@ -1,6 +1,6 @@
 <?php
 
-namespace DTL\Invoke\Exception;
+namespace DTL\Invoke\Internal\Exception;
 
 use Exception;
 

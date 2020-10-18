@@ -1,10 +1,10 @@
 <?php
 
-namespace DTL\Invoke\ArgumentResolver;
+namespace DTL\Invoke\Internal\ArgumentResolver;
 
-use DTL\Invoke\ArgumentResolver;
-use DTL\Invoke\Parameters;
-use DTL\Invoke\ResolvedArguments;
+use DTL\Invoke\Internal\ArgumentResolver;
+use DTL\Invoke\Internal\Parameters;
+use DTL\Invoke\Internal\ResolvedArguments;
 use ReflectionFunctionAbstract;
 
 class NamedArgumentResolver implements ArgumentResolver
