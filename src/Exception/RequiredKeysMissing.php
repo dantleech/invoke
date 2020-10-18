@@ -4,6 +4,6 @@ namespace DTL\Invoke\Exception;
 
 use RuntimeException;
 
-class RequiredKeysMissing extends RuntimeException
+class RequiredKeysMissing extends InvokeException
 {
 }

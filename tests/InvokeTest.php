@@ -2,6 +2,8 @@
 
 namespace DTL\Invoke\Tests;
 
+use DTL\Invoke\Exception\ClassHasNoConstructor;
+use DTL\Invoke\Exception\ReflectionError;
 use DTL\Invoke\Invoke;
 use DTL\Invoke\Exception\InvalidParameterType;
 use DTL\Invoke\Exception\RequiredKeysMissing;
@@ -13,6 +15,31 @@ class InvokeTest extends TestCase
     public function testWithNoConstructor()
     {
         $this->assertEquals(new TestClass1(), Invoke::new(TestClass1::class, []));
+    }
+
+    public function testExceptionIfNoConstructorAndKeys(): void
+    {
+        $this->expectException(ClassHasNoConstructor::class);
+        $this->assertEquals(new TestClass1(), Invoke::new(TestClass1::class, [
+            'one'
+        ]));
+    }
+
+    public function testExceptionOnNonExistingClassOnInstantiate(): void
+    {
+        $this->expectException(ReflectionError::class);
+        Invoke::new('THISISNOTEXISTING');
+    }
+
+    public function testInstantiateWithUnorderedArgs(): void
+    {
+        $this->assertEquals(
+            new TestClass3('1', '2'),
+            Invoke::new(TestClass3::class, [
+                'two' => '2',
+                'one' => '1',
+            ])
+        );
     }
 
     public function testWithConstructorWithArgument()
