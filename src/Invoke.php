@@ -2,11 +2,14 @@
 
 namespace DTL\Invoke;
 
+use DTL\Invoke\ArgumentResolver\NamedArgumentResolver;
+use DTL\Invoke\ArgumentResolver\TypedArgumentResolver;
 use DTL\Invoke\Exception\ClassHasNoConstructor;
 use DTL\Invoke\Exception\InvalidParameterType;
 use DTL\Invoke\Exception\RequiredKeysMissing;
 use DTL\Invoke\Exception\UnknownKeys;
 use ReflectionClass;
+use ReflectionFunctionAbstract;
 use ReflectionParameter;
 
 class Invoke
@@ -19,21 +22,35 @@ class Invoke
      */
     private $mode;
 
+    /**
+     * @var ArgumentResolver
+     */
+    private $resolver;
+
     private const METHOD_CONSTRUCT = '__construct';
 
-    public function __construct(int $mode)
+    public function __construct(ArgumentResolver $resolver)
     {
-        $this->mode = $mode;
+        $this->resolver = $resolver;
     }
 
     public static function new(string $className, array $data = [], $mode = self::MODE_NAME)
     {
-        return (new self($mode))->doInstantiate($className, $data);
+        return (new self(self::resolverFromMode($mode)))->doInstantiate($className, $data);
     }
 
     public static function method(object $object, string $methodName, array $args, int $mode = self::MODE_NAME)
     {
-        return (new self($mode))->doCall($object, $methodName, $args);
+        return (new self(self::resolverFromMode($mode)))->doCall($object, $methodName, $args);
+    }
+
+    private static function resolverFromMode(int $mode): ArgumentResolver
+    {
+        if ($mode === self::MODE_TYPE) {
+            return new TypedArgumentResolver();
+        }
+
+        return new NamedArgumentResolver();
     }
 
     private function doCall(object $object, string $methodName, array $args)
@@ -66,185 +83,54 @@ class Invoke
         return $class->newInstanceArgs($arguments);
     }
 
-    /**
-     * @return ReflectionParameter[]
-     */
-    private function mapParameters(ReflectionClass $class, string $methodName): array
+    private function resolveArguments(ReflectionClass $class, string $methodName, array $givenArgs): array
     {
-        $parameters = [];
-        foreach ($class->getMethod($methodName)->getParameters() as $reflectionParameter) {
-            $parameters[$reflectionParameter->getName()] = $reflectionParameter;
-        }
+        $method = $class->getMethod($methodName);
+        $parameters = Parameters::fromRefelctionFunctionAbstract($method);
 
-        return $parameters;
+        $arguments = $this->mergeDefaults($parameters, $givenArgs);
+        $arguments = $this->resolver->resolve($parameters, $arguments);
+
+        $this->assertCorrectKeys($parameters, $givenArgs, $method);
+        $this->assertRequiredKeys($parameters, $arguments, $method);
+
+        return $arguments;
     }
 
-    private function assertCorrectKeys(array $data, $parameters, string $className)
+    private function mergeDefaults(Parameters $parameters, array $givenArgs): array
     {
-        if (!$diff = array_diff(array_keys($data), array_keys($parameters))) {
+        return array_merge($parameters->defaults()->toArray(), $givenArgs);
+    }
+
+    private function assertCorrectKeys(Parameters $parameters, array $givenArgs, ReflectionFunctionAbstract $function): void
+    {
+        if (!$diff = array_diff(array_keys($givenArgs), $parameters->keys())) {
             return;
         }
 
         throw new UnknownKeys(sprintf(
             'Unknown keys "%s" for "%s", known keys: "%s"',
             implode('", "', $diff),
-            $className,
-            implode('", "', array_keys($parameters))
+            $this->describe($function),
+            implode('", "', $parameters->keys())
         ));
     }
 
-    private function assertRequiredKeys(array $data, array $parameters, string $className)
+    private function assertRequiredKeys(Parameters $parameters, array $givenArgs, ReflectionFunctionAbstract $function): void
     {
-        $requiredParameters = array_filter($parameters, function (ReflectionParameter $parameter) {
-            return (bool) !$parameter->isDefaultValueAvailable();
-        });
-
-        if (!$diff = array_diff(array_keys($requiredParameters), array_keys($data))) {
+        if (!$diff = array_diff($parameters->required()->keys(), array_keys($givenArgs))) {
             return;
         }
 
         throw new RequiredKeysMissing(sprintf(
             'Required keys "%s" for "%s", are missing',
             implode('", "', $diff),
-            $className
+            $this->describe($function)
         ));
     }
 
-    private function mergeDefaults($parameters, array $data): array
+    private function describe(ReflectionFunctionAbstract $function): string
     {
-        $defaults = array_map(function (ReflectionParameter $parameter) {
-            return $parameter->isDefaultValueAvailable() ? $parameter->getDefaultValue() : null;
-        }, $parameters);
-
-        $data = array_merge($defaults, $data);
-        return $data;
-    }
-
-    private function assertTypes(array $data, array $parameters, string $className)
-    {
-        foreach ($data as $key => $value) {
-            if (!isset($parameters[$key])) {
-                continue;
-            }
-
-            $parameter = $parameters[$key];
-
-            assert($parameter instanceof ReflectionParameter);
-
-            $reflectionType = $parameter->getType();
-
-            if (!$reflectionType) {
-                continue;
-            }
-
-            if ($reflectionType->allowsNull() && is_null($value)) {
-                continue;
-            }
-
-            $typeName = is_object($value) ? get_class($value) : gettype($value);
-
-            if (!is_object($value)) {
-                $typeName = $this->resolveInternalTypeName($value);
-            }
-
-            if ($reflectionType->isBuiltin() && $reflectionType->getName() === $typeName) {
-                continue;
-            }
-
-            if ($reflectionType->getName() === 'object' && is_object($value)) {
-                continue;
-            }
-
-            if ($typeName !== 'array' && !$reflectionType->isBuiltin()) {
-                $reflectionClass = new ReflectionClass($typeName);
-
-                if ($typeName === $reflectionType->getName() || $reflectionClass->isSubclassOf($reflectionType->getName())) {
-                    continue;
-                }
-            }
-
-            throw new InvalidParameterType(sprintf(
-                'Argument "%s" has type "%s" but was passed "%s" for "%s"',
-                $parameter->getName(),
-                $reflectionType->getName(),
-                is_object($value) ? get_class($value) : gettype($value),
-                $className
-            ));
-        }
-    }
-
-    private function resolveInternalTypeName($value): string
-    {
-        $type = gettype($value);
-
-        if ($type === 'integer') {
-            return 'int';
-        }
-
-        if ($type === 'boolean') {
-            return 'bool';
-        }
-
-        return $type;
-    }
-
-    private function resolveArguments(ReflectionClass $class, string $methodName, array $givenArgs): array
-    {
-        if ($this->mode === self::MODE_TYPE) {
-            return $this->resolveArgumentsByType($class, $methodName, $givenArgs);
-        }
-
-        return $this->resolveArgumentsByName($class, $methodName, $givenArgs);
-    }
-
-    private function resolveArgumentsByName(ReflectionClass $class, string $methodName, array $givenArgs)
-    {
-        $parameters = $this->mapParameters($class, $methodName);
-        
-        $this->assertCorrectKeys($givenArgs, $parameters, $class->getName());
-        $this->assertRequiredKeys($givenArgs, $parameters, $class->getName());
-        $givenArgs = $this->mergeDefaults($parameters, $givenArgs);
-        $this->assertTypes($givenArgs, $parameters, $class->getName());
-        
-        $arguments = [];
-        foreach ($parameters as $name => $defaultValue) {
-            $arguments[] = $givenArgs[$name];
-        }
-        return $arguments;
-    }
-
-    private function resolveArgumentsByType(ReflectionClass $class, string $methodName, array $givenArgs): array
-    {
-        $parameters = $this->mapParameters($class, $methodName);
-        $resolved = [];
-
-        foreach ($givenArgs as $givenArg) {
-            foreach ($parameters as $parameter) {
-                $type = $parameter->getType();
-
-                if (null === $type) {
-                    continue;
-                }
-
-                if (
-                    gettype($givenArg) !== 'object' &&
-                    $type->isBuiltin() &&
-                    $type->getName() === $this->resolveInternalTypeName($givenArg)
-                ) {
-                    $resolved[$parameter->getName()] = $givenArg;
-                }
-
-                if (gettype($givenArg) === 'object') {
-                    if (is_a($givenArg, $type->getName())) {
-                        $resolved[$parameter->getName()] = $givenArg;
-                    }
-                }
-            }
-        }
-
-        $this->assertRequiredKeys($resolved, $parameters, $class->getName());
-        $resolved = $this->mergeDefaults($parameters, $resolved);
-
-        return array_values($resolved);
+        return 'THIS IS NOT A DESCRIPTION';
     }
 }
