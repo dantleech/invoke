@@ -19,6 +19,7 @@ class NamedArgumentResolver implements ArgumentResolver
         foreach ($args as $name => $value) {
             if (!$parameters->has($name)) {
                 $unresolved[$name] = $value;
+                continue;
             }
 
             $resolved[$name] = $value;
