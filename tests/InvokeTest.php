@@ -2,17 +2,51 @@
 
 namespace DTL\Invoke\Tests;
 
+use DTL\Invoke\Internal\Exception\ClassHasNoConstructor;
+use DTL\Invoke\Internal\Exception\ReflectionError;
 use DTL\Invoke\Invoke;
-use DTL\Invoke\Exception\InvalidParameterType;
-use DTL\Invoke\Exception\RequiredKeysMissing;
-use DTL\Invoke\Exception\UnknownKeys;
+use DTL\Invoke\Internal\Exception\InvalidParameterType;
+use DTL\Invoke\Internal\Exception\RequiredKeysMissing;
+use DTL\Invoke\Internal\Exception\UnknownKeys;
 use PHPUnit\Framework\TestCase;
 
 class InvokeTest extends TestCase
 {
-    public function testWithNoConstructor()
+    public function testNewWithNoConstructor()
     {
         $this->assertEquals(new TestClass1(), Invoke::new(TestClass1::class, []));
+    }
+
+    public function testExceptionIfNoConstructorAndKeys(): void
+    {
+        $this->expectException(ClassHasNoConstructor::class);
+        $this->assertEquals(new TestClass1(), Invoke::new(TestClass1::class, [
+            'one'
+        ]));
+    }
+
+    public function testExceptionOnNonExistingClassOnInstantiate(): void
+    {
+        $this->expectException(ReflectionError::class);
+        Invoke::new('THISISNOTEXISTING');
+    }
+
+    public function testExceptionIfClassDoesntHaveNamedMethod(): void
+    {
+        $this->expectException(ReflectionError::class);
+        $class = new TestClass1();
+        Invoke::method($class, 'THISISNOTEXISTING', []);
+    }
+
+    public function testInstantiateWithUnorderedArgs(): void
+    {
+        $this->assertEquals(
+            new TestClass3('1', '2'),
+            Invoke::new(TestClass3::class, [
+                'two' => '2',
+                'one' => '1',
+            ])
+        );
     }
 
     public function testWithConstructorWithArgument()

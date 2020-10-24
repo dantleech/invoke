@@ -1,0 +1,19 @@
+{
+    "bootstrap": "vendor/autoload.php",
+    "php_disable_ini": true,
+    "path": "tests/Benchmark",
+    "php_config": {
+        "extension": [
+            "ctype",
+            "dom",
+            "iconv",
+            "json",
+            "mbstring",
+            "phar",
+            "simplexml",
+            "tokenizer",
+            "xml",
+            "xmlwriter"
+        ]
+    }
+}

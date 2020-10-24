@@ -7,7 +7,7 @@ Utility class to create new classes or invoke methods using named arguments.
 
 PHP does not currently support [named
 parameters](https://wiki.php.net/rfc/named_params), this utility provides a
-convienient way to emulate them.
+convenient way to emulate them.
 
 Installation
 ------------
@@ -21,11 +21,35 @@ $ composer require dantleech/invoke
 Why
 ---
 
-Sometimes arguments may be sourced from arrays (e.g. user or developer configuration), having
-named parameters in this case can make things simpler and save time.
+Sometimes arguments may be sourced from arrays e.g. for "deserialization" or
+instantiating configuration nodes).
 
-I probably **wouldn't** use this as an alternative way to create a new class when there is no reason
-not to use its existing construction methods.
+Validating the existence of array keys, checking their types etc. is error
+prone and time consuming.
+
+By using `Invoke::new(MyObject::class, $array)` you can map the array keys
+directly to the `__construct` parameters.
+
+This library will, throw descriptive exceptions:
+
+- If there are extra keys.
+- If there are missing required keys (i.e. non-nullable values).
+- If the types are wrong.
+
+Performance
+-----------
+
+`Inoke::new(Clas::class, [])` is around 50x slower than `new Class()`, or
+260,000 operations per second vs. ~13,000,000.
+
+```
++--------------------------+---------+
+| subject                  | mode    |
++--------------------------+---------+
+| benchInvokeNewClass      | 3.720μs |
+| benchInstantiateNewClass | 0.076μs |
++--------------------------+---------+
+```
 
 Usage
 -----
