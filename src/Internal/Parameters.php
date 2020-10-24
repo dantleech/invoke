@@ -20,7 +20,7 @@ class Parameters
     private $owner;
 
     /**
-     * @param array<string,ReflectionParameter>
+     * @param array<string,ReflectionParameter> $parameterMap
      */
     public function __construct(ReflectionFunctionAbstract $function, array $parameterMap)
     {

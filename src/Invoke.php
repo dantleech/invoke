@@ -2,22 +2,17 @@
 
 namespace DTL\Invoke;
 
+use Closure;
 use DTL\Invoke\Internal\ArgumentResolver\NamedArgumentResolver;
 use DTL\Invoke\Internal\ArgumentResolver\TypedArgumentResolver;
 use DTL\Invoke\Internal\ArgumentsAssert;
 use DTL\Invoke\Internal\Exception\ClassHasNoConstructor;
-use DTL\Invoke\Internal\Exception\InvalidParameterType;
 use DTL\Invoke\Internal\Exception\ReflectionError;
-use DTL\Invoke\Internal\Exception\RequiredKeysMissing;
-use DTL\Invoke\Internal\Exception\UnknownKeys;
 use ReflectionClass;
 use ReflectionException;
-use ReflectionFunctionAbstract;
-use ReflectionMethod;
-use ReflectionParameter;
 use DTL\Invoke\Internal\ArgumentResolver;
 use DTL\Invoke\Internal\Parameters;
-use DTL\Invoke\Internal\ResolvedArguments;
+use TypeError;
 
 class Invoke
 {
@@ -76,21 +71,25 @@ class Invoke
             ));
         }
 
-        return $class->newInstanceArgs(
-            $this->resolveArguments($class, self::METHOD_CONSTRUCT, $args)
-        );
+        return $this->resolveArguments($class, self::METHOD_CONSTRUCT, $args, function (array $args) use ($class) {
+            return $class->newInstanceArgs($args);
+        });
     }
 
     private function doCall(object $object, string $methodName, array $args)
     {
         $class = $this->reflectClass(get_class($object));
-        $arguments = $this->resolveArguments($class, $methodName, $args);
-
-        return $class->getMethod($methodName)->invoke($object, ...$arguments);
+        return $this->resolveArguments($class, $methodName, $args, function (array $arguments) use ($class, $object, $methodName) {
+            return $class->getMethod($methodName)->invoke($object, ...$arguments);
+        });
     }
 
-    private function resolveArguments(ReflectionClass $class, string $methodName, array $arguments): array
-    {
+    private function resolveArguments(
+        ReflectionClass $class,
+        string $methodName,
+        array $arguments,
+        Closure $factory
+    ) {
         try {
             $method = $class->getMethod($methodName);
         } catch (ReflectionException $error) {
@@ -100,13 +99,16 @@ class Invoke
         $parameters = Parameters::fromRefelctionFunctionAbstract($method);
         $resolved = $this->resolver->resolve($parameters, $arguments);
 
-        ArgumentsAssert::noUnknownKeys($resolved, $parameters);
-        ArgumentsAssert::requiredKeys($resolved, $parameters);
-        ArgumentsAssert::types($resolved, $parameters);
 
         $arguments = $this->mergeDefaults($parameters, $resolved->resolved());
 
-        return array_values($arguments);
+        try {
+            return $factory(array_values($arguments));
+        } catch (TypeError $error) {
+            ArgumentsAssert::noUnknownKeys($resolved, $parameters);
+            ArgumentsAssert::requiredKeys($resolved, $parameters);
+            ArgumentsAssert::types($resolved, $parameters);
+        }
     }
 
     private function mergeDefaults(Parameters $parameters, array $givenArgs): array

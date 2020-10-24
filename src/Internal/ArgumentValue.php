@@ -18,5 +18,4 @@ class ArgumentValue
 
         return $type;
     }
-
 }

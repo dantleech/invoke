@@ -5,7 +5,6 @@ namespace DTL\Invoke\Internal\ArgumentResolver;
 use DTL\Invoke\Internal\ArgumentResolver;
 use DTL\Invoke\Internal\Parameters;
 use DTL\Invoke\Internal\ResolvedArguments;
-use ReflectionFunctionAbstract;
 
 class TypedArgumentResolver implements ArgumentResolver
 {

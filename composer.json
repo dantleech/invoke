@@ -34,10 +34,12 @@
     "integrate": [
       "@php-cs-fixer",
       "@phpstan",
-      "@phpunit"
+      "@phpunit",
+      "@phpbench"
     ],
     "phpstan": "./vendor/bin/phpstan analyse --ansi --level=7",
     "php-cs-fixer": "./vendor/bin/php-cs-fixer fix --ansi --dry-run",
-    "phpunit": "./vendor/bin/phpunit --colors=always"
+    "phpunit": "./vendor/bin/phpunit --colors=always",
+    "phpbench": "./vendor/bin/phpbench run --ansi"
   }
 }
