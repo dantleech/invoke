@@ -105,11 +105,6 @@ class ArgumentAssertTest extends TestCase
 
     private function parameters(string $method): Parameters
     {
-        $class = new ReflectionClass(TestClass::class);
-        $method = $class->getMethod($method);
-        $parameters = array_combine(array_map(function (ReflectionParameter $parameter) {
-            return $parameter->getName();
-        }, $method->getParameters()), $method->getParameters());
-        return new Parameters($method, $parameters);
+        return Parameters::fromClassNameAndMethod(TestClass::class, $method);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace DTL\Invoke\Internal;
 
+use ReflectionClass;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
 use ReflectionParameter;
@@ -26,6 +27,16 @@ class Parameters
     {
         $this->owner = $function;
         $this->parameterMap = $parameterMap;
+    }
+
+    public static function fromClassNameAndMethod(string $className, string $method): self
+    {
+        $class = new ReflectionClass($className);
+        $method = $class->getMethod($method);
+        $parameters = array_combine(array_map(function (ReflectionParameter $parameter) {
+            return $parameter->getName();
+        }, $method->getParameters()), $method->getParameters());
+        return new self($method, $parameters);
     }
 
     public static function fromRefelctionFunctionAbstract(ReflectionFunctionAbstract $function): self
