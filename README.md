@@ -39,7 +39,7 @@ This library will, throw descriptive exceptions:
 Performance
 -----------
 
-`Inoke::new(Clas::class, [])` is around 50x slower than `new Class()`, or
+`Inoke::new(Class::class, [])` is around 50x slower than `new Class()`, or
 260,000 operations per second vs. ~13,000,000.
 
 ```

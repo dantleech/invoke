@@ -41,5 +41,10 @@
     "php-cs-fixer": "./vendor/bin/php-cs-fixer fix --ansi --dry-run",
     "phpunit": "./vendor/bin/phpunit --colors=always",
     "phpbench": "./vendor/bin/phpbench run --ansi"
+  },
+  "extra": {
+      "branch-alias": {
+          "dev-master": "1.2-dev"
+      }
   }
 }
