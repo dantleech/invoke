@@ -8,7 +8,6 @@ use DTL\Invoke\Internal\ArgumentResolver\TypedArgumentResolver;
 use DTL\Invoke\Internal\ArgumentAssert;
 use DTL\Invoke\Internal\Exception\ClassHasNoConstructor;
 use DTL\Invoke\Internal\Exception\ReflectionError;
-use DTL\Invoke\Internal\InvalidParameterType;
 use DTL\Invoke\Internal\Exception\InvokeException;
 use ReflectionClass;
 use ReflectionException;

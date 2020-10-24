@@ -4,13 +4,13 @@ namespace DTL\Invoke\Tests\Internal;
 
 use DTL\Invoke\Internal\ArgumentAssert;
 use DTL\Invoke\Internal\Exception\InvalidParameterType;
+use DTL\Invoke\Internal\Exception\RequiredKeysMissing;
+use DTL\Invoke\Internal\Exception\UnknownKeys;
 use DTL\Invoke\Internal\Parameters;
 use DTL\Invoke\Internal\ResolvedArguments;
 use DTL\Invoke\Tests\Stub\TestClass;
 use Generator;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
-use ReflectionParameter;
 
 class ArgumentAssertTest extends TestCase
 {
@@ -86,6 +86,14 @@ class ArgumentAssertTest extends TestCase
             false
         ];
 
+        yield 'type: resource' => [
+            new ResolvedArguments([
+                '_' => STDOUT,
+            ], []),
+            $this->parameters('resource'),
+            false
+        ];
+
         yield 'ignores correct class' => [
             new ResolvedArguments([
                 '_' => new \stdClass(),
@@ -98,6 +106,86 @@ class ArgumentAssertTest extends TestCase
             new ResolvedArguments([
                 '_' => new \stdClass(),
             ], []),
+            $this->parameters('int'),
+            true
+        ];
+
+        yield 'invalid type: resource' => [
+            new ResolvedArguments([
+                '_' => STDOUT,
+            ], []),
+            $this->parameters('int'),
+            true
+        ];
+    }
+
+    /**
+     * @dataProvider provideUnknownKeys
+     */
+    public function testUnknownKeys(ResolvedArguments $resolved, Parameters $parameters, bool $shouldThrow): void
+    {
+        if ($shouldThrow) {
+            $this->expectException(UnknownKeys::class);
+        } else {
+            $this->addToAssertionCount(1);
+        }
+
+        ArgumentAssert::noUnknownKeys($resolved, $parameters);
+    }
+
+    /**
+     * @return Generator<mixed>
+     */
+    public function provideUnknownKeys(): Generator
+    {
+        yield 'no unresolved' => [
+            new ResolvedArguments([
+                '_' => 1,
+            ], []),
+            $this->parameters('int'),
+            false
+        ];
+
+        yield 'unresolved' => [
+            new ResolvedArguments([
+                '_' => 1,
+            ], [
+                'asd' => 1,
+            ]),
+            $this->parameters('int'),
+            true
+        ];
+    }
+
+    /**
+     * @dataProvider provideRequiredKeys
+     */
+    public function testRequiredKeys(ResolvedArguments $resolved, Parameters $parameters, bool $shouldThrow): void
+    {
+        if ($shouldThrow) {
+            $this->expectException(RequiredKeysMissing::class);
+        } else {
+            $this->addToAssertionCount(1);
+        }
+
+        ArgumentAssert::requiredKeys($resolved, $parameters);
+    }
+
+    /**
+     * @return Generator<mixed>
+     */
+    public function provideRequiredKeys(): Generator
+    {
+        yield 'no missing required keys' => [
+            new ResolvedArguments([
+                '_' => 1,
+            ], []),
+            $this->parameters('int'),
+            false
+        ];
+
+        yield 'missing required key' => [
+            new ResolvedArguments([], []),
             $this->parameters('int'),
             true
         ];
