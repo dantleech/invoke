@@ -8,6 +8,10 @@ class ArgumentValue
     {
         $type = gettype($value);
 
+        if ($type === 'double') {
+            return 'float';
+        }
+
         if ($type === 'integer') {
             return 'int';
         }
