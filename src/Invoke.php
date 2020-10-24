@@ -113,7 +113,7 @@ class Invoke
             throw new InvokeException(sprintf(
                 'Unhandled type error when invoking "%s": %s',
                 $class->getName(),
-                $error->getMessage(),
+                $error->getMessage()
             ), 0, $error);
         }
     }
