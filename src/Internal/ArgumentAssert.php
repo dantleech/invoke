@@ -7,7 +7,7 @@ use DTL\Invoke\Internal\Exception\RequiredKeysMissing;
 use DTL\Invoke\Internal\Exception\UnknownKeys;
 use ReflectionClass;
 
-class ArgumentsAssert
+class ArgumentAssert
 {
     public static function types(ResolvedArguments $resolved, Parameters $parameters): void
     {

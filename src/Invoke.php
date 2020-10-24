@@ -5,9 +5,11 @@ namespace DTL\Invoke;
 use Closure;
 use DTL\Invoke\Internal\ArgumentResolver\NamedArgumentResolver;
 use DTL\Invoke\Internal\ArgumentResolver\TypedArgumentResolver;
-use DTL\Invoke\Internal\ArgumentsAssert;
+use DTL\Invoke\Internal\ArgumentAssert;
 use DTL\Invoke\Internal\Exception\ClassHasNoConstructor;
 use DTL\Invoke\Internal\Exception\ReflectionError;
+use DTL\Invoke\Internal\InvalidParameterType;
+use DTL\Invoke\Internal\Exception\InvokeException;
 use ReflectionClass;
 use ReflectionException;
 use DTL\Invoke\Internal\ArgumentResolver;
@@ -71,7 +73,7 @@ class Invoke
             ));
         }
 
-        return $this->resolveArguments($class, self::METHOD_CONSTRUCT, $args, function (array $args) use ($class) {
+        return $this->instantiate($class, self::METHOD_CONSTRUCT, $args, function (array $args) use ($class) {
             return $class->newInstanceArgs($args);
         });
     }
@@ -79,12 +81,12 @@ class Invoke
     private function doCall(object $object, string $methodName, array $args)
     {
         $class = $this->reflectClass(get_class($object));
-        return $this->resolveArguments($class, $methodName, $args, function (array $arguments) use ($class, $object, $methodName) {
+        return $this->instantiate($class, $methodName, $args, function (array $arguments) use ($class, $object, $methodName) {
             return $class->getMethod($methodName)->invoke($object, ...$arguments);
         });
     }
 
-    private function resolveArguments(
+    private function instantiate(
         ReflectionClass $class,
         string $methodName,
         array $arguments,
@@ -105,9 +107,15 @@ class Invoke
         try {
             return $factory(array_values($arguments));
         } catch (TypeError $error) {
-            ArgumentsAssert::noUnknownKeys($resolved, $parameters);
-            ArgumentsAssert::requiredKeys($resolved, $parameters);
-            ArgumentsAssert::types($resolved, $parameters);
+            ArgumentAssert::noUnknownKeys($resolved, $parameters);
+            ArgumentAssert::requiredKeys($resolved, $parameters);
+            ArgumentAssert::types($resolved, $parameters);
+
+            throw new InvokeException(sprintf(
+                'Unhandled type error when invoking "%s": %s',
+                $class->getName(),
+                $error->getMessage(),
+            ), 0, $error);
         }
     }
 
