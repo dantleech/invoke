@@ -38,8 +38,9 @@ class Invoke
     }
 
     /**
-     * @return object
-     * @param class-string $className
+     * @template C
+     * @return C
+     * @param class-string<C> $className
      */
     public static function new(string $className, array $data = [], int $mode = self::MODE_NAME)
     {
@@ -64,7 +65,9 @@ class Invoke
     }
 
     /**
-     * @param class-string $className
+     * @template C of object
+     * @return C
+     * @param class-string<C> $className
      */
     private function doInstantiate(string $className, array $args): object
     {
