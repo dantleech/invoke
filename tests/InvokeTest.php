@@ -2,12 +2,12 @@
 
 namespace DTL\Invoke\Tests;
 
-use DTL\Invoke\Internal\Exception\ClassHasNoConstructor;
-use DTL\Invoke\Internal\Exception\ReflectionError;
+use DTL\Invoke\Exception\ClassHasNoConstructor;
+use DTL\Invoke\Exception\ReflectionError;
 use DTL\Invoke\Invoke;
-use DTL\Invoke\Internal\Exception\InvalidParameterType;
-use DTL\Invoke\Internal\Exception\RequiredKeysMissing;
-use DTL\Invoke\Internal\Exception\UnknownKeys;
+use DTL\Invoke\Exception\InvalidParameterType;
+use DTL\Invoke\Exception\RequiredKeysMissing;
+use DTL\Invoke\Exception\UnknownKeys;
 use PHPUnit\Framework\TestCase;
 
 class InvokeTest extends TestCase

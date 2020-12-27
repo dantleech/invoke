@@ -3,9 +3,9 @@
 namespace DTL\Invoke\Tests\Internal;
 
 use DTL\Invoke\Internal\ArgumentAssert;
-use DTL\Invoke\Internal\Exception\InvalidParameterType;
-use DTL\Invoke\Internal\Exception\RequiredKeysMissing;
-use DTL\Invoke\Internal\Exception\UnknownKeys;
+use DTL\Invoke\Exception\InvalidParameterType;
+use DTL\Invoke\Exception\RequiredKeysMissing;
+use DTL\Invoke\Exception\UnknownKeys;
 use DTL\Invoke\Internal\Parameters;
 use DTL\Invoke\Internal\ResolvedArguments;
 use DTL\Invoke\Tests\Stub\TestClass;
