@@ -4,6 +4,9 @@ namespace DTL\Invoke\Internal;
 
 class ArgumentValue
 {
+    /**
+     * @param mixed $value
+     */
     public static function resolveInternalTypeName($value): string
     {
         $type = gettype($value);

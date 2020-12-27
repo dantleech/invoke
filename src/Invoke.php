@@ -37,11 +37,18 @@ class Invoke
         $this->resolver = $resolver;
     }
 
-    public static function new(string $className, array $data = [], $mode = self::MODE_NAME)
+    /**
+     * @return object
+     * @param class-string $className
+     */
+    public static function new(string $className, array $data = [], int $mode = self::MODE_NAME)
     {
         return (new self(self::resolverFromMode($mode)))->doInstantiate($className, $data);
     }
 
+    /**
+     * @return mixed
+     */
     public static function method(object $object, string $methodName, array $args, int $mode = self::MODE_NAME)
     {
         return (new self(self::resolverFromMode($mode)))->doCall($object, $methodName, $args);
@@ -56,6 +63,9 @@ class Invoke
         return new NamedArgumentResolver();
     }
 
+    /**
+     * @param class-string $className
+     */
     private function doInstantiate(string $className, array $args): object
     {
         $class = $this->reflectClass($className);
@@ -77,6 +87,9 @@ class Invoke
         });
     }
 
+    /**
+     * @return mixed
+     */
     private function doCall(object $object, string $methodName, array $args)
     {
         $class = $this->reflectClass(get_class($object));
@@ -85,6 +98,10 @@ class Invoke
         });
     }
 
+    /**
+     * @param ReflectionClass<object> $class
+     * @return object
+     */
     private function instantiate(
         ReflectionClass $class,
         string $methodName,
@@ -123,6 +140,10 @@ class Invoke
         return array_merge($parameters->defaults()->toArray(), $givenArgs);
     }
 
+    /**
+     * @param class-string $className
+     * @return ReflectionClass<object>
+     */
     private function reflectClass(string $className): ReflectionClass
     {
         try {

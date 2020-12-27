@@ -29,6 +29,9 @@ class Parameters
         $this->parameterMap = $parameterMap;
     }
 
+    /**
+     * @param class-string $className
+     */
     public static function fromClassNameAndMethod(string $className, string $method): self
     {
         $class = new ReflectionClass($className);
@@ -96,6 +99,9 @@ class Parameters
         return $this->parameterMap[$key];
     }
 
+    /**
+     * @param mixed $value
+     */
     public function findOneByValueType($value): ?ReflectionParameter
     {
         foreach ($this->parameterMap as $name => $parameter) {
@@ -120,6 +126,9 @@ class Parameters
         return null;
     }
 
+    /**
+     * @param mixed $value
+     */
     private function resolveInternalTypeName($value): string
     {
         $type = gettype($value);
