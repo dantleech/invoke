@@ -1,6 +1,6 @@
 <?php
 
-namespace DTL\Invoke\Internal\Exception;
+namespace DTL\Invoke\Exception;
 
 class ClassHasNoConstructor extends InvokeException
 {

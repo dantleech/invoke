@@ -2,9 +2,9 @@
 
 namespace DTL\Invoke\Internal;
 
-use DTL\Invoke\Internal\Exception\InvalidParameterType;
-use DTL\Invoke\Internal\Exception\RequiredKeysMissing;
-use DTL\Invoke\Internal\Exception\UnknownKeys;
+use DTL\Invoke\Exception\InvalidParameterType;
+use DTL\Invoke\Exception\RequiredKeysMissing;
+use DTL\Invoke\Exception\UnknownKeys;
 use ReflectionClass;
 
 class ArgumentAssert

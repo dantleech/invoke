@@ -1,3 +1,22 @@
 parameters:
+    level: 7
     paths: [ src ]
     inferPrivatePropertyTypeFromConstructor: true
+    checkMissingIterableValueType: false
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        -
+            message: "#^Call to an undefined method ReflectionType\\:\\:getName\\(\\)\\.$#"
+            count: 5
+            path: src/Internal/ArgumentAssert.php
+
+        -
+            message: "#^Call to an undefined method ReflectionType\\:\\:isBuiltin\\(\\)\\.$#"
+            count: 2
+            path: src/Internal/ArgumentAssert.php
+
+        -
+            message: "#^Parameter \\#1 .* of class ReflectionClass constructor expects class\\-string\\<T of object\\>\\|T of object, string given\\.$#"
+            count: 1
+            path: src/Internal/ArgumentAssert.php
+
