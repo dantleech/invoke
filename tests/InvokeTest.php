@@ -145,35 +145,6 @@ class InvokeTest extends TestCase
         $this->assertEquals('hello', $subject->string);
     }
 
-    public function testInvokeInvokeWithTypesOnly()
-    {
-        $subject = new TestClass6();
-        Invoke::method($subject, 'callMe', [
-            true,
-            'hello',
-            ['goodbye'],
-            12,
-            new TestClass1(),
-        ], Invoke::MODE_TYPE);
-
-        $this->assertEquals(true, $subject->bool);
-        $this->assertEquals('hello', $subject->string);
-        $this->assertEquals(['goodbye'], $subject->array);
-        $this->assertEquals(12, $subject->int);
-        $this->assertInstanceOf(TestClass1::class, $subject->class);
-    }
-
-    public function testInvokeExceptionOnMissingTypes()
-    {
-        $this->expectException(RequiredKeysMissing::class);
-        $subject = new TestClass6();
-        Invoke::method($subject, 'callMe', [
-            'hello',
-        ], Invoke::MODE_TYPE);
-
-        $this->assertEquals(true, $subject->bool);
-    }
-
     public function testParameterExceptionWhenArrayPassedToObject()
     {
         $this->expectException(InvalidParameterType::class);

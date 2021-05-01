@@ -4,7 +4,6 @@ namespace DTL\Invoke;
 
 use Closure;
 use DTL\Invoke\Internal\ArgumentResolver\NamedArgumentResolver;
-use DTL\Invoke\Internal\ArgumentResolver\TypedArgumentResolver;
 use DTL\Invoke\Internal\ArgumentAssert;
 use DTL\Invoke\Exception\ClassHasNoConstructor;
 use DTL\Invoke\Exception\ReflectionError;
@@ -17,9 +16,6 @@ use TypeError;
 
 class Invoke
 {
-    public const MODE_TYPE = 1;
-    public const MODE_NAME = 2;
-
     /**
      * @var int
      */
@@ -32,9 +28,9 @@ class Invoke
 
     private const METHOD_CONSTRUCT = '__construct';
 
-    public function __construct(ArgumentResolver $resolver)
+    private function __construct()
     {
-        $this->resolver = $resolver;
+        $this->resolver = new NamedArgumentResolver();
     }
 
     /**
@@ -42,26 +38,17 @@ class Invoke
      * @param class-string<C> $className
      * @return C
      */
-    public static function new(string $className, array $data = [], int $mode = self::MODE_NAME): object
+    public static function new(string $className, array $args = []): object
     {
-        return (new self(self::resolverFromMode($mode)))->doInstantiate($className, $data);
+        return (new self())->doInstantiate($className, $args);
     }
 
     /**
      * @return mixed
      */
-    public static function method(object $object, string $methodName, array $args, int $mode = self::MODE_NAME)
+    public static function method(object $object, string $methodName, array $args)
     {
-        return (new self(self::resolverFromMode($mode)))->doCall($object, $methodName, $args);
-    }
-
-    private static function resolverFromMode(int $mode): ArgumentResolver
-    {
-        if ($mode === self::MODE_TYPE) {
-            return new TypedArgumentResolver();
-        }
-
-        return new NamedArgumentResolver();
+        return (new self())->doCall($object, $methodName, $args);
     }
 
     /**
