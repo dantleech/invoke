@@ -38,11 +38,11 @@ class Invoke
     }
 
     /**
-     * @template C
-     * @return C
+     * @template C of object
      * @param class-string<C> $className
+     * @return C
      */
-    public static function new(string $className, array $data = [], int $mode = self::MODE_NAME)
+    public static function new(string $className, array $data = [], int $mode = self::MODE_NAME): object
     {
         return (new self(self::resolverFromMode($mode)))->doInstantiate($className, $data);
     }
@@ -66,8 +66,8 @@ class Invoke
 
     /**
      * @template C of object
-     * @return C
      * @param class-string<C> $className
+     * @return C
      */
     private function doInstantiate(string $className, array $args): object
     {
@@ -75,7 +75,9 @@ class Invoke
 
         if (!$class->hasMethod(self::METHOD_CONSTRUCT)) {
             if (empty($args)) {
-                return $class->newInstance();
+                $object = $class->newInstance();
+                assert($object instanceof $className);
+                return $object;
             }
 
             throw new ClassHasNoConstructor(sprintf(
@@ -85,9 +87,11 @@ class Invoke
             ));
         }
 
-        return $this->instantiate($class, self::METHOD_CONSTRUCT, $args, function (array $args) use ($class) {
+        $object = $this->instantiate($class, self::METHOD_CONSTRUCT, $args, function (array $args) use ($class) {
             return $class->newInstanceArgs($args);
         });
+        assert($object instanceof $className);
+        return $object;
     }
 
     /**
@@ -103,7 +107,7 @@ class Invoke
 
     /**
      * @param ReflectionClass<object> $class
-     * @return object
+     * @return mixed
      */
     private function instantiate(
         ReflectionClass $class,
@@ -119,8 +123,6 @@ class Invoke
 
         $parameters = Parameters::fromRefelctionFunctionAbstract($method);
         $resolved = $this->resolver->resolve($parameters, $arguments);
-
-
         $arguments = $this->mergeDefaults($parameters, $resolved->resolved());
 
         try {

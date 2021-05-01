@@ -39,11 +39,13 @@ class Parameters
         $parameters = (array)array_combine(array_map(function (ReflectionParameter $parameter) {
             return $parameter->getName();
         }, $method->getParameters()), $method->getParameters());
+        /** @phpstan-ignore-next-line */
         return new self($method, $parameters);
     }
 
     public static function fromRefelctionFunctionAbstract(ReflectionFunctionAbstract $function): self
     {
+        /** @phpstan-ignore-next-line */
         return new self($function, (array)array_combine(
             array_map(function (ReflectionParameter $function) {
                 return $function->getName();

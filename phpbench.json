@@ -1,8 +1,8 @@
 {
-    "bootstrap": "vendor/autoload.php",
-    "php_disable_ini": true,
-    "path": "tests/Benchmark",
-    "php_config": {
+    "runner.bootstrap": "vendor/autoload.php",
+    "runner.php_disable_ini": true,
+    "runner.path": "tests/Benchmark",
+    "runner.php_config": {
         "extension": [
             "ctype",
             "dom",
