@@ -19,7 +19,6 @@ class InvokeTest extends TestCase
 
     public function testExceptionIfNoConstructorAndKeys(): void
     {
-        $this->expectException(ClassHasNoConstructor::class);
         $this->assertEquals(new TestClass1(), Invoke::new(TestClass1::class, [
             'one'
         ]));
