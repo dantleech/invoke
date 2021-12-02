@@ -4,16 +4,7 @@
     "runner.path": "tests/Benchmark",
     "runner.php_config": {
         "extension": [
-            "ctype",
-            "dom",
-            "iconv",
-            "json",
-            "mbstring",
-            "phar",
-            "simplexml",
-            "tokenizer",
-            "xml",
-            "xmlwriter"
+            "iconv"
         ]
     }
 }
