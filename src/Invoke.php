@@ -58,6 +58,13 @@ class Invoke
      */
     private function doInstantiate(string $className, array $args): object
     {
+        if (PHP_VERSION_ID >= 80000) {
+            try {
+                return new $className(...$args);
+            } catch (\Error $error) {
+            }
+        }
+
         $class = $this->reflectClass($className);
 
         if (!$class->hasMethod(self::METHOD_CONSTRUCT)) {
